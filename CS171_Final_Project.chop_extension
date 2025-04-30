@@ -1,0 +1,128 @@
+Inductive natlist: Type :=
+|nil
+|cons (n: nat)(l: natlist).
+
+Inductive state : Type := 
+|On_going
+|Draw
+|Has_Winner.
+
+
+Notation "x :: l" := (cons x l) (at level 60, right associativity).
+Notation "[ ]" := nil.
+Notation "[ x ; .. ; y ]" := (cons x .. (cons y nil) ..).
+
+Fixpoint eqb(a: nat)(b: nat): bool :=
+match a, b with
+|O, O => true
+|O, S _ => false
+|S _, O => false
+|S a', S b' => eqb a' b'
+end.
+
+Notation " x =? y " := (eqb x y)(at level 60, right associativity).
+
+Fixpoint Valid_MoveList(l : natlist): bool :=
+match l with
+|[] => false
+|x :: [] => if x =? 0 then false else true
+|x :: l' => if x =? 0 then false else Valid_MoveList l'
+end.
+
+
+
+Fixpoint geb(a: nat)(b: nat): bool :=
+match a, b with
+|O, O => true
+|O, S _ => false
+|S _, O => true
+|S a', S b' => geb a' b'
+end.
+
+Notation " x >=? y " := (geb x y)(at level 60, right associativity).
+
+
+
+Fixpoint Valid_Move_Exists(sticks : nat)(l : natlist) : bool :=
+match Valid_MoveList l with
+| false => false
+| true => match l with
+          |[] => false
+          |x :: l' => if (sticks >=? x) then true else Valid_Move_Exists(sticks)(l')
+          end
+end.
+
+
+
+Definition Game_State(sticks: nat)(l: natlist) : state :=
+match Valid_Move_Exists(sticks)(l) with
+|false => if sticks =? 0 then Has_Winner else Draw
+|true => On_going
+end.
+
+
+Fixpoint reduce_by_one_til_zero(n: nat) : nat:=
+match n with
+|O => O
+|S n' => reduce_by_one_til_zero n'
+end.
+
+
+Lemma reduce_by_one_til_zero_is_zero: forall n: nat, reduce_by_one_til_zero n = 0.
+Proof.
+induction n.
+- simpl. reflexivity.
+- simpl. apply IHn.
+Qed.
+
+
+
+
+Theorem subnim_always_has_winner_if_1_is_a_move: forall sticks: nat, forall moves : natlist,
+moves = [1] /\ sticks = reduce_by_one_til_zero(sticks)  
+-> Game_State sticks moves  = Has_Winner.
+Proof. 
+intros. destruct H. rewrite reduce_by_one_til_zero_is_zero in H0. unfold Game_State.
+rewrite H. rewrite H0. simpl. reflexivity.
+Qed.
+
+
+
+Theorem subnim_can_draw_if_one_not_a_move: exists sticks: nat, exists moves: natlist,
+Game_State sticks moves = Draw.
+Proof.
+unfold Game_State. exists 1. exists [2;3;4]. simpl. reflexivity.
+Qed.
+
+
+
+Fixpoint odd (n : nat): bool :=
+match n with
+|O => false
+|S O => true
+|S n' => odd n'
+end.
+
+
+Lemma odd_minus_smallest_even_til_odd_smaller_than_even: 
+forall odd_sticks smallest_even_move n_times: nat, forall possible_even_moves: natlist,
+(odd_sticks - smallest_even_move * n_times  < smallest_even_move) -> possible_even_moves = []. 
+Proof.
+
+Admitted.
+
+
+Theorem sub_nim_with_odd_sticks_but_even_moves_only_is_always_draw:
+forall sticks: nat, forall even_moves_only: natlist,
+odd(sticks) = true /\ even_moves_only = [] -> Game_State sticks even_moves_only = Draw.
+Proof.
+intros. destruct H. rewrite H0. unfold Game_State. simpl. destruct sticks.
+- simpl. discriminate H.
+- simpl. reflexivity.
+Qed.
+
+
+
+
+
+
