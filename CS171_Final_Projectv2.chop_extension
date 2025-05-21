@@ -23,20 +23,20 @@ Inductive who_is_winning : Type :=
 
 
 Definition determine_game_state
-(sticks: nat)  (possible_moves_from_1_to: nat)(current_player: player_turn) : who_is_winning:= 
+(sticks: nat)  (max_move: nat)(current_player: player_turn) : who_is_winning:= 
 match sticks with
 | O => match current_player with
        |p1 => p1Winner
        |p2 => p2Winner
        end
-|S _ => if (sticks <=? possible_moves_from_1_to) then 
+|S _ => if (sticks <=? max_move) then 
               match current_player with
               |p1 => p1WinningPos_and_p2LosingPos
               |p2 => p2WinningPos_and_p1LosingPos 
               end
 
               else
-              match (sticks mod (possible_moves_from_1_to + 1)) with 
+              match (sticks mod (max_move + 1)) with 
               |O => match current_player with
                     |p1 => p2WinningPos_and_p1LosingPos
                     |p2 => p1WinningPos_and_p2LosingPos
