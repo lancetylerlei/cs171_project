@@ -2,11 +2,6 @@ Inductive natlist: Type :=
 |nil
 |cons (n: nat)(l: natlist).
 
-Inductive state : Type := 
-|On_going
-|Draw
-|Has_Winner.
-
 
 Notation "x :: l" := (cons x l) (at level 60, right associativity).
 Notation "[ ]" := nil.
@@ -22,15 +17,6 @@ end.
 
 Notation " x =? y " := (eqb x y)(at level 60, right associativity).
 
-Fixpoint Valid_MoveList(l : natlist): bool :=
-match l with
-|[] => false
-|x :: [] => if x =? 0 then false else true
-|x :: l' => if x =? 0 then false else Valid_MoveList l'
-end.
-
-
-
 Fixpoint geb(a: nat)(b: nat): bool :=
 match a, b with
 |O, O => true
@@ -40,6 +26,19 @@ match a, b with
 end.
 
 Notation " x >=? y " := (geb x y)(at level 60, right associativity).
+
+Inductive state : Type := 
+|On_going
+|Draw
+|Has_Winner.
+
+Fixpoint Valid_MoveList(l : natlist): bool :=
+match l with
+|[] => false
+|x :: [] => if x =? 0 then false else true
+|x :: l' => if x =? 0 then false else Valid_MoveList l'
+end.
+
 
 
 
