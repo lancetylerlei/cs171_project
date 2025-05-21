@@ -27,6 +27,12 @@ end.
 
 Notation " x >=? y " := (geb x y)(at level 60, right associativity).
 
+Fixpoint odd (n : nat): bool :=
+match n with
+|O => false
+|S O => true
+|S n' => odd n'
+end.
 
 
 Fixpoint Valid_MoveList(l : natlist): bool :=
@@ -76,6 +82,12 @@ induction n.
 Qed.
 
 
+Lemma odd_minus_smallest_even_til_odd_smaller_than_even: 
+forall odd_sticks smallest_even_move n_times: nat, forall possible_even_moves: natlist,
+(odd_sticks - smallest_even_move * n_times  < smallest_even_move) -> possible_even_moves = []. 
+Proof.
+
+Admitted.
 
 
 Theorem subnim_always_has_winner_if_1_is_a_move: forall sticks: nat, forall moves : natlist,
@@ -96,20 +108,6 @@ Qed.
 
 
 
-Fixpoint odd (n : nat): bool :=
-match n with
-|O => false
-|S O => true
-|S n' => odd n'
-end.
-
-
-Lemma odd_minus_smallest_even_til_odd_smaller_than_even: 
-forall odd_sticks smallest_even_move n_times: nat, forall possible_even_moves: natlist,
-(odd_sticks - smallest_even_move * n_times  < smallest_even_move) -> possible_even_moves = []. 
-Proof.
-
-Admitted.
 
 
 Theorem sub_nim_with_odd_sticks_but_even_moves_only_is_always_draw:
