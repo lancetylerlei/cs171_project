@@ -27,10 +27,7 @@ end.
 
 Notation " x >=? y " := (geb x y)(at level 60, right associativity).
 
-Inductive state : Type := 
-|On_going
-|Draw
-|Has_Winner.
+
 
 Fixpoint Valid_MoveList(l : natlist): bool :=
 match l with
@@ -51,6 +48,10 @@ match Valid_MoveList l with
           end
 end.
 
+Inductive state : Type := 
+|On_going
+|Draw
+|Has_Winner.
 
 
 Definition Game_State(sticks: nat)(l: natlist) : state :=
